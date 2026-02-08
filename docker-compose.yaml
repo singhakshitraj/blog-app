@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:8000"
+    depends_on:
+      - migrate
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+  migrate:
+    build: .
+    depends_on:
+      - blogpostgres
+    environment:
+    - DATABASE_URL=${DATABASE_URL}
+    command: alembic upgrade head
+
+  blogpostgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - blogapp:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  blogapp:
